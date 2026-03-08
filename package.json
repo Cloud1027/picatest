@@ -1,0 +1,7 @@
+{
+  "name": "picatest",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Minimal isolated Pikafish initialization lab",
+  "license": "UNLICENSED"
+}

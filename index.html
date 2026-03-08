@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Pikafish Minimal Lab</title>
+  <meta name="description" content="獨立測試 Pikafish 多核心初始化的最小化頁面。">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">Independent Engine Sandbox</p>
+      <h1>Pikafish Minimal Lab</h1>
+      <p class="subtitle">
+        這個 repo 專門用來驗證 Pikafish WebAssembly binary 本身能否在
+        <code>COOP + COEP(require-corp)</code> 環境下成功初始化，不再和 Cloud Chess Note 主程式共用部署流程。
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>環境診斷</h2>
+        <button id="copyEnvButton" class="ghost" type="button">複製環境</button>
+      </div>
+      <div class="grid">
+        <div class="cell">
+          <span class="label">網址</span>
+          <strong id="diagHref" class="mono">-</strong>
+        </div>
+        <div class="cell">
+          <span class="label">Secure Context</span>
+          <strong id="diagSecure">-</strong>
+        </div>
+        <div class="cell">
+          <span class="label">crossOriginIsolated</span>
+          <strong id="diagIso">-</strong>
+        </div>
+        <div class="cell">
+          <span class="label">SharedArrayBuffer</span>
+          <strong id="diagSab">-</strong>
+        </div>
+        <div class="cell">
+          <span class="label">hardwareConcurrency</span>
+          <strong id="diagThreads">-</strong>
+        </div>
+        <div class="cell cell-wide">
+          <span class="label">User Agent</span>
+          <strong id="diagUa" class="mono">-</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>最小測試</h2>
+        <span id="statusBadge" class="badge neutral">尚未初始化</span>
+      </div>
+
+      <div class="controls">
+        <button id="loadScriptButton" class="ghost" type="button">1. 載入腳本</button>
+        <button id="initConfigButton" class="primary" type="button">2A. 初始化（帶設定）</button>
+        <button id="initRawButton" class="ghost" type="button">2B. 初始化（原始）</button>
+        <button id="uciButton" class="ghost" type="button" disabled>送出 UCI</button>
+        <button id="startposButton" class="ghost" type="button" disabled>startpos</button>
+        <button id="goButton" class="ghost" type="button" disabled>go depth 10</button>
+        <button id="stopButton" class="ghost" type="button" disabled>stop</button>
+        <button id="clearButton" class="ghost" type="button">清除記錄</button>
+      </div>
+
+      <div class="note">
+        `初始化（帶設定）` 會傳入 `locateFile / mainScriptUrlOrBlob / onReceiveStdout`。<br>
+        `初始化（原始）` 只呼叫 `Pikafish()`，盡量貼近最原始工廠行為。
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>執行記錄</h2>
+        <span class="hint">會顯示 load、promise resolve、runtime callback、UCI 回應與錯誤</span>
+      </div>
+      <pre id="logOutput" class="log">[bootstrap] minimal lab loaded</pre>
+    </section>
+  </main>
+
+  <script defer src="./app.js"></script>
+</body>
+</html>
