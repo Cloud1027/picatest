@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Pikafish Minimal Lab</title>
-  <meta name="description" content="獨立測試 Pikafish 多核心初始化的最小化頁面。">
+  <meta name="description" content="獨立 Pikafish 測試頁，用來驗證不同環境會選到哪一份 wasm，並觀察 iPhone Safari 是否能成功初始化引擎。">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -13,8 +13,8 @@
       <p class="eyebrow">Independent Engine Sandbox</p>
       <h1>Pikafish Minimal Lab</h1>
       <p class="subtitle">
-        這個 repo 專門用來驗證 Pikafish WebAssembly binary 本身能否在
-        <code>COOP + COEP(require-corp)</code> 環境下成功初始化，不再和 Cloud Chess Note 主程式共用部署流程。
+        這個獨立測試頁只做一件事：驗證不同環境會選到哪一份 Pikafish WebAssembly binary，
+        先確認 iPhone Safari 是否能用正確的 wasm 起動，再決定要不要把流程帶回主程式。
       </p>
     </header>
 
@@ -44,6 +44,14 @@
           <span class="label">hardwareConcurrency</span>
           <strong id="diagThreads">-</strong>
         </div>
+        <div class="cell">
+          <span class="label">偵測結果</span>
+          <strong id="diagProfile">-</strong>
+        </div>
+        <div class="cell cell-wide">
+          <span class="label">預設 wasm</span>
+          <strong id="diagWasm" class="mono">-</strong>
+        </div>
         <div class="cell cell-wide">
           <span class="label">User Agent</span>
           <strong id="diagUa" class="mono">-</strong>
@@ -54,12 +62,12 @@
     <section class="card">
       <div class="card-head">
         <h2>最小測試</h2>
-        <span id="statusBadge" class="badge neutral">尚未初始化</span>
+        <span id="statusBadge" class="badge neutral">等待初始化</span>
       </div>
 
       <div class="controls">
         <button id="loadScriptButton" class="ghost" type="button">1. 載入腳本</button>
-        <button id="initConfigButton" class="primary" type="button">2A. 初始化（帶設定）</button>
+        <button id="initConfigButton" class="primary" type="button">2A. 初始化（自動選 wasm）</button>
         <button id="initRawButton" class="ghost" type="button">2B. 初始化（原始）</button>
         <button id="uciButton" class="ghost" type="button" disabled>送出 UCI</button>
         <button id="startposButton" class="ghost" type="button" disabled>startpos</button>
@@ -69,15 +77,15 @@
       </div>
 
       <div class="note">
-        `初始化（帶設定）` 會傳入 `locateFile / mainScriptUrlOrBlob / onReceiveStdout`。<br>
-        `初始化（原始）` 只呼叫 `Pikafish()`，盡量貼近最原始工廠行為。
+        `2A` 會先偵測環境，優先決定要載 `pikafish.wasm` 或 `pikafish-ios.wasm`。<br>
+        `2B` 只呼叫原始 `Pikafish()`，保留給我們對照引擎工廠的原始行為。
       </div>
     </section>
 
     <section class="card">
       <div class="card-head">
         <h2>執行記錄</h2>
-        <span class="hint">會顯示 load、promise resolve、runtime callback、UCI 回應與錯誤</span>
+        <span class="hint">這裡會顯示 load、promise resolve、runtime callback、UCI 回應與錯誤</span>
       </div>
       <pre id="logOutput" class="log">[bootstrap] minimal lab loaded</pre>
     </section>
