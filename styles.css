@@ -120,6 +120,30 @@ code,
   gap: 12px;
 }
 
+.thread-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.field input {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 button {
   appearance: none;
   border: 1px solid rgba(255, 255, 255, 0.08);

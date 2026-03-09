@@ -21,7 +21,10 @@
     uciButton: document.getElementById("uciButton"),
     startposButton: document.getElementById("startposButton"),
     goButton: document.getElementById("goButton"),
+    goTimedButton: document.getElementById("goTimedButton"),
     stopButton: document.getElementById("stopButton"),
+    threadsInput: document.getElementById("threadsInput"),
+    setThreadsButton: document.getElementById("setThreadsButton"),
     clearButton: document.getElementById("clearButton"),
     copyEnvButton: document.getElementById("copyEnvButton"),
     logOutput: document.getElementById("logOutput")
@@ -52,7 +55,9 @@
     elements.uciButton.disabled = !enabled;
     elements.startposButton.disabled = !enabled;
     elements.goButton.disabled = !enabled;
+    elements.goTimedButton.disabled = !enabled;
     elements.stopButton.disabled = !enabled;
+    elements.setThreadsButton.disabled = !enabled;
   }
 
   function detectEngineVariant() {
@@ -81,14 +86,16 @@
 
   function updateDiagnostics() {
     const variant = detectEngineVariant();
+    const threads = navigator.hardwareConcurrency || 4;
     elements.diagHref.textContent = window.location.href;
     elements.diagSecure.textContent = window.isSecureContext ? "是" : "否";
     elements.diagIso.textContent = window.crossOriginIsolated ? "是" : "否";
     elements.diagSab.textContent = typeof SharedArrayBuffer !== "undefined" ? "可用" : "不可用";
-    elements.diagThreads.textContent = String(navigator.hardwareConcurrency || "unknown");
+    elements.diagThreads.textContent = String(threads || "unknown");
     elements.diagProfile.textContent = `${variant.label} (${variant.key})`;
     elements.diagWasm.textContent = `${ENGINE_BASE}${variant.wasm}`;
     elements.diagUa.textContent = navigator.userAgent;
+    elements.threadsInput.value = String(Math.max(1, Math.min(threads, 4)));
   }
 
   function copyEnvironment() {
@@ -285,6 +292,43 @@
     log("instance 沒有 sendCommand / postMessage。", "error");
   }
 
+  function getRequestedThreads() {
+    const maxThreads = Math.max(1, navigator.hardwareConcurrency || 4);
+    const parsed = Number.parseInt(elements.threadsInput.value, 10);
+    if (Number.isNaN(parsed)) {
+      return 1;
+    }
+    return Math.max(1, Math.min(parsed, maxThreads));
+  }
+
+  function applyThreads() {
+    if (!state.instance) {
+      log("引擎尚未初始化，不能設定 Threads。", "error");
+      return;
+    }
+
+    const threads = getRequestedThreads();
+    elements.threadsInput.value = String(threads);
+    log(`準備設定 Threads=${threads}`);
+    sendCommand("uci");
+    sendCommand(`setoption name Threads value ${threads}`);
+    sendCommand("isready");
+  }
+
+  function runTimedSearch() {
+    if (!state.instance) {
+      log("引擎尚未初始化，不能開始測試。", "error");
+      return;
+    }
+
+    const threads = getRequestedThreads();
+    log(`開始 3 秒測試，Threads=${threads}`);
+    sendCommand(`setoption name Threads value ${threads}`);
+    sendCommand("isready");
+    sendCommand("position startpos");
+    sendCommand("go movetime 3000");
+  }
+
   elements.loadScriptButton.addEventListener("click", async () => {
     try {
       await loadScript();
@@ -300,7 +344,9 @@
   elements.uciButton.addEventListener("click", () => sendCommand("uci"));
   elements.startposButton.addEventListener("click", () => sendCommand("position startpos"));
   elements.goButton.addEventListener("click", () => sendCommand("go depth 10"));
+  elements.goTimedButton.addEventListener("click", runTimedSearch);
   elements.stopButton.addEventListener("click", () => sendCommand("stop"));
+  elements.setThreadsButton.addEventListener("click", applyThreads);
   elements.clearButton.addEventListener("click", () => {
     elements.logOutput.textContent = "[bootstrap] log cleared";
   });

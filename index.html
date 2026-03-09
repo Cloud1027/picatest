@@ -72,13 +72,23 @@
         <button id="uciButton" class="ghost" type="button" disabled>送出 UCI</button>
         <button id="startposButton" class="ghost" type="button" disabled>startpos</button>
         <button id="goButton" class="ghost" type="button" disabled>go depth 10</button>
+        <button id="goTimedButton" class="ghost" type="button" disabled>go 3秒</button>
         <button id="stopButton" class="ghost" type="button" disabled>stop</button>
         <button id="clearButton" class="ghost" type="button">清除記錄</button>
       </div>
 
+      <div class="thread-row">
+        <label class="field">
+          <span class="label">Threads</span>
+          <input id="threadsInput" type="number" min="1" max="16" step="1" value="4">
+        </label>
+        <button id="setThreadsButton" class="ghost" type="button" disabled>設定 Threads</button>
+      </div>
+
       <div class="note">
         `2A` 會先偵測環境，優先決定要載 `pikafish.wasm` 或 `pikafish-ios.wasm`。<br>
-        `2B` 只呼叫原始 `Pikafish()`，保留給我們對照引擎工廠的原始行為。
+        `2B` 只呼叫原始 `Pikafish()`，保留給我們對照引擎工廠的原始行為。<br>
+        想驗證多核心是否真的啟用時，請先 `送出 UCI`，再 `設定 Threads`，最後按 `go 3秒` 觀察 NPS 與回應。
       </div>
     </section>
 
